@@ -1,0 +1,14 @@
+body{
+    background-color: azure;
+}
+
+form{
+    display: flex;
+    flex-direction: row;
+}
+
+div.note{
+    margin-top: 1%;
+    background-color: rgb(241, 239, 239);
+    border: solid black 1px;
+}
