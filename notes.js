@@ -10,6 +10,22 @@ class notesApp{
         this.contentInput = document.getElementById("content");
         this.notesContainer = document.getElementById("notes-container");
 
+        //----
+        this.submitBtn = this.form.querySelector('button[type="submit"]');
+        //----
+        this.noteTpl = document.getElementById("note-template");
+        //---
+
+        this.contentInput.addEventListener("keydown", (e) => {
+            if (e.key === "Tab") {
+                e.preventDefault();
+                const el = e.target;
+                const start = el.selectionStart;
+                const end = el.selectionEnd;
+                const tab = "    "; 
+                el.setRangeText(tab, start, end, "end");
+            }
+        });
 
         this.form.addEventListener("submit", event =>{
             event.preventDefault();
@@ -18,7 +34,8 @@ class notesApp{
             
             if (this.editingId !== undefined) {
                 this.updateNote(this.editingId, title, content, this.notesContainer);
-                this.editingId = undefined; 
+                this.editingId = undefined;
+                this.submitBtn.textContent = "Add note" 
             } else {
                 this.addNote(title, content, this.notesContainer);
             }
@@ -31,6 +48,12 @@ class notesApp{
             if (event.target.classList.contains('delete-button')) {
                 const noteDiv = event.target.closest('.note');
                 const id = Number(noteDiv.dataset.id);
+                //----
+                const confirmation = window.confirm(
+                    `Delete note? This action cannot be undone.`
+                )
+                if(!confirmation) return;
+                //----
                 this.deleteNote(id, this.notesContainer);
             }
         })     
@@ -59,7 +82,7 @@ class notesApp{
         this.commit();
         this.renderNote(note, notesContainer);
     }
-
+    /*
     renderNote(note, notesContainer){
         const noteDiv = document.createElement("div");
         noteDiv.className = "note";
@@ -69,6 +92,7 @@ class notesApp{
         noteTitle.textContent = note.title;
 
         const noteContent = document.createElement("p");
+        noteContent.className = "note-content";
         noteContent.textContent = note.content;
 
         const deleteBtn = document.createElement("button");
@@ -78,16 +102,46 @@ class notesApp{
         const editBtn = document.createElement("button");
         editBtn.textContent = "Edit";
         editBtn.className = "edit-button";
-
+        //----
+        const actions = document.createElement("div");
+        actions.className = "note-actions"
+        actions.appendChild(editBtn);
+        actions.appendChild(deleteBtn);
+        //----
         noteDiv.appendChild(noteTitle);
         noteDiv.appendChild(noteContent);
-        noteDiv.appendChild(deleteBtn);
-        noteDiv.appendChild(editBtn);
-
+        //
+        noteDiv.appendChild(actions);
+        
+        //noteDiv.appendChild(deleteBtn);
+        //noteDiv.appendChild(editBtn);
+        
+        //
         notesContainer.appendChild(noteDiv);
+
+    }*/
+    renderNote(note, notesContainer){
+        const clone = this.noteTpl.content.firstElementChild.cloneNode(true);
+
+        clone.dataset.id = note.id;
+
+    
+        clone.querySelector(".note-title").textContent = note.title;
+        clone.querySelector(".note-content").textContent = note.content;
+
+        notesContainer.appendChild(clone);
     }
 
+
+
     deleteNote(id, notesContainer){
+        //-----
+        if(this.editingId === id){
+            alert("You are editing this note. Save or cancel befeore deleting.");
+            return;
+        }
+        //-----
+
         const noteDiv = notesContainer.querySelector(`[data-id="${id}"]`);
         if(noteDiv) notesContainer.removeChild(noteDiv);
         this.notes = this.notes.filter(note => note.id !== id);
@@ -103,6 +157,10 @@ class notesApp{
         this.contentInput.value = noteContent;
 
         this.editingId = id;
+        //----
+        this.submitBtn.textContent = "Save changes"
+        //---
+        // this.submitBtn.textContent = "Add note"-
     }
 
     updateNote(id, newTitle, newContent, notesContainer){

@@ -8,7 +8,32 @@ form{
 }
 
 div.note{
+    
+    display: flex;
+    flex-direction: column;
+
     margin-top: 1%;
     background-color: rgb(241, 239, 239);
     border: solid black 1px;
+    min-height: 150px;
+    width: 100%;
+}
+
+#content{
+    min-height: 80px;
+    width: 40%;
+    resize: vertical;
+}
+
+.note-actions{
+    margin-top: auto;
+    display: flex;
+    gap: 5px;
+    margin-left: 5px;
+    margin-bottom: 5px;
+}
+
+.note-content{
+    white-space: pre-wrap;
+    tab-size: 4;
 }
